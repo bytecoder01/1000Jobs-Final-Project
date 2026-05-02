@@ -341,10 +341,7 @@ curl -X POST http://localhost:3000/apply \
   -d '{
     "jobUrl": "https://jobs.lever.co/benchsci/77b9c4b2-af7f-479a-8f29-820618219388",
     "applicantData": {
-      "name": "Jane Doe",
-      "currentTitle": "Senior Product Manager",
-      "currentCompany": "Acme Corp",
-      "additionalInfo": "10 years in B2B SaaS product management, deep background in ML tooling and data infrastructure."
+      "name": "Jane Doe"
     },
     "resumePath": "/absolute/path/to/stealth-agent/sample-cv/resume.pdf",
     "submitApplication": false
@@ -359,17 +356,7 @@ curl -X POST http://localhost:3000/apply \
   -d '{
     "jobUrl": "https://jobs.lever.co/fullscript/c63d8b0e-1107-4514-90ad-c47d8059eecd",
     "applicantData": {
-      "name": "Jane Doe",
-      "email": "jane.doe@email.com",
-      "phone": "+1-555-123-4567",
-      "linkedin": "https://linkedin.com/in/janedoe",
-      "github": "https://github.com/janedoe",
-      "currentTitle": "Senior Product Manager",
-      "currentCompany": "Acme Corp",
-      "currentLocation": "Toronto, Ontario",
-      "website": "https://janedoe.com",
-      "coverLetter": "I am excited to apply for this role because...",
-      "additionalInfo": "10 years in B2B SaaS, specialising in health-tech and ML tooling."
+      "name": "Jane Doe"
     },
     "resumePath": "/absolute/path/to/stealth-agent/sample-cv/resume.pdf",
     "submitApplication": false

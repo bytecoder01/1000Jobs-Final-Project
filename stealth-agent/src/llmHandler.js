@@ -42,6 +42,38 @@ function safeParseJSON(text) {
     if (m) return JSON.parse(m[0]);
   } catch (_) {}
 
+  // Attempt 5: truncation recovery — the response was cut off mid-JSON.
+  // Drop the incomplete last key-value pair, close any open string, then
+  // close the object so we can salvage everything that came before.
+  try {
+    // Find the last complete "key": value pair by locating the last comma
+    // that sits at the top level of the object.
+    let depth = 0;
+    let lastSafeComma = -1;
+    let inString = false;
+    let escape = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (escape)          { escape = false; continue; }
+      if (ch === '\\')     { escape = true;  continue; }
+      if (ch === '"')      { inString = !inString; continue; }
+      if (inString)        continue;
+      if (ch === '{' || ch === '[') depth++;
+      else if (ch === '}' || ch === ']') depth--;
+      else if (ch === ',' && depth === 1) lastSafeComma = i;
+    }
+
+    if (lastSafeComma > 0) {
+      const salvaged = text.substring(0, lastSafeComma) + '}';
+      const result = JSON.parse(salvaged);
+      logger.warn('[LLM] safeParseJSON: salvaged truncated response', {
+        keys: Object.keys(result).length,
+      });
+      return result;
+    }
+  } catch (_) {}
+
   return null;
 }
 
@@ -147,8 +179,10 @@ Return ONLY JSON.`;
         temperature: 0.2,
         topP: 0.9,
         topK: 40,
-        maxOutputTokens: 3000,
-        responseMimeType: 'application/json', 
+        maxOutputTokens: 4000,
+        // NOTE: responseMimeType: 'application/json' is intentionally omitted —
+        // Gemini's JSON mode imposes a lower internal token ceiling that causes
+        // silent truncation when there are many questions.
       },
     });
 
